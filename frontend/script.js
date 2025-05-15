@@ -198,24 +198,27 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Handle message submission
     async function handleMessageSubmit(e) {
         e.preventDefault();
-        console.log('handleMessageSubmit triggered');
+        console.log('handleMessageSubmit called');
         
         const message = messageInput.value.trim();
-        console.log('Message submission check:', {
-            message: !!message,
-            currentChat: !!currentChat,
+        console.log('Submission check:', {
+            message: message,
+            currentUser: currentUser,
+            currentChat: currentChat,
             isWaitingForResponse
         });
         
         if (!message || !currentChat || isWaitingForResponse) {
+            console.log('Early exit due to invalid conditions');
             return;
         }
         
-        console.log(`Sending message: ${message}`);
+        console.log('Adding sent message to UI');
         addMessageToUI(message, 'sent');
         messageInput.value = '';
         
         isWaitingForResponse = true;
+        console.log('Adding loading indicator');
         const loadingEl = document.createElement('div');
         loadingEl.className = 'message received';
         loadingEl.innerHTML = '<div class="loading"></div>';
@@ -223,6 +226,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         messagesEl.scrollTop = messagesEl.scrollHeight;
         
         try {
+            console.log('Sending POST to:', `/chat/${currentUser}/${currentChat}`);
             const response = await fetch(`/chat/${currentUser}/${currentChat}`, {
                 method: 'POST',
                 headers: {
@@ -235,7 +239,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 credentials: 'include'
             });
             
-            console.log(`Response status: ${response.status}`);
+            console.log('Response status:', response.status);
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Server error: ${response.status} - ${errorText}`);
@@ -247,7 +251,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             messagesEl.removeChild(loadingEl);
             if (data.response) {
                 addMessageToUI(data.response, 'received');
-                console.log('Reloading reservations after message');
+                console.log('Reloading reservations');
                 await loadReservations();
             } else {
                 addMessageToUI('Sorry, I couldn\'t process your request.', 'received');
@@ -255,9 +259,10 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) {
             console.error('Error sending message:', error);
             messagesEl.removeChild(loadingEl);
-            //addMessageToUI(`Error: ${error.message || 'Failed to connect to the server. Please try again.'}`, 'received');
+            addMessageToUI(`Error: ${error.message || 'Failed to connect to the server.'}`, 'received');
         } finally {
             isWaitingForResponse = false;
+            console.log('Reset isWaitingForResponse');
         }
     }
     
