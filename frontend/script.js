@@ -161,13 +161,13 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 messagesEl.scrollTop = messagesEl.scrollHeight;
             } else {
-                addMessageToUI('Hello! How can I help you today?', 'received');
+                addMessageToUI('Hello! Im Lumi, a customer service agent. I can answer any questions you have about NeuroSphere Lab and assist you in booking an appointment for a meeting with the company. How can I help you today?', 'received');
             }
         } catch (error) {
             console.error('Error loading chat messages:', error);
             // No error message in chat UI per user request
             // Show welcome message if no messages exist
-            addMessageToUI('Hello! How can I help you today?', 'received');
+            addMessageToUI('Hello! Im Lumi, a customer service agent. I can answer any questions you have about NeuroSphere Lab and assist you in booking an appointment for a meeting with the company. How can I help you today?', 'received');
         }
     }
     
