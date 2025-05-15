@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             setupEventListeners();
         } catch (error) {
             console.error('Initialization error:', error);
-            // No error message in chat UI per user request
+            //addMessageToUI('Error initializing the app. Please refresh the page.', 'received');
         }
     }
     
@@ -72,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             return data.user_id;
         } catch (error) {
             console.error('Error getting user ID:', error);
+            //addMessageToUI('Failed to connect to the server. Please try again.', 'received');
             return null;
         }
     }
@@ -124,6 +125,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <span class="status">Confirmed</span>
                     `;
                     reservationsListEl.appendChild(reservationEl);
+                    
                 });
             } else {
                 reservationsListEl.innerHTML = '<p class="no-reservations">No reservations found.</p>';
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return loadReservations(retryCount - 1, delay * 2);
             }
             reservationsListEl.innerHTML = '<p class="no-reservations">Error loading reservations. Please try again.</p>';
-            // No error message in chat UI per user request
+            //addMessageToUI('Failed to load reservations. Please try again later.', 'received');
         }
     }
     
@@ -161,13 +163,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 messagesEl.scrollTop = messagesEl.scrollHeight;
             } else {
-                addMessageToUI('Hello! Im Lumi, a customer service agent. I can answer any questions you have about NeuroSphere Lab and assist you in booking an appointment for a meeting with the company. How can I help you today?', 'received');
+                addMessageToUI('Hey there, I am Lumi a customers service Agent. I can answer any question about NeuroSphere Lab company and I can book you an appointment for a meeting with the company.I am ready to help you', 'received');
             }
         } catch (error) {
             console.error('Error loading chat messages:', error);
-            // No error message in chat UI per user request
-            // Show welcome message if no messages exist
-            addMessageToUI('Hello! Im Lumi, a customer service agent. I can answer any questions you have about NeuroSphere Lab and assist you in booking an appointment for a meeting with the company. How can I help you today?', 'received');
+           // addMessageToUI(`Error loading messages: ${error.message}`, 'received');
         }
     }
     
@@ -255,8 +255,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) {
             console.error('Error sending message:', error);
             messagesEl.removeChild(loadingEl);
-            addMessageToUI('Sorry, I couldn\'t process your request.', 'received');
-            // Keep this generic message as it aligns with user interaction, not error exposure
+            //addMessageToUI(`Error: ${error.message || 'Failed to connect to the server. Please try again.'}`, 'received');
         } finally {
             isWaitingForResponse = false;
         }
