@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             setupEventListeners();
         } catch (error) {
             console.error('Initialization error:', error);
-            addMessageToUI('Error initializing the app. Please refresh the page.', 'received');
+            // No error message in chat UI per user request
         }
     }
     
@@ -72,7 +72,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             return data.user_id;
         } catch (error) {
             console.error('Error getting user ID:', error);
-            addMessageToUI('Failed to connect to the server. Please try again.', 'received');
             return null;
         }
     }
@@ -125,16 +124,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                         <span class="status">Confirmed</span>
                     `;
                     reservationsListEl.appendChild(reservationEl);
-                    
-                    // Add click event for interactivity
-                    //reservationEl.addEventListener('click', () => {
-                    //    console.log(`Clicked reservation: ${reservationEl.dataset.reservationId}`, {
-                    //        date: formattedDate,
-                     //       time: reservation.time
-                    //    });
-                        // Placeholder for future actions (e.g., cancel)
-                    //    addMessageToUI('Reservation details clicked. Action coming soon!', 'received');
-                    //});
                 });
             } else {
                 reservationsListEl.innerHTML = '<p class="no-reservations">No reservations found.</p>';
@@ -146,7 +135,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return loadReservations(retryCount - 1, delay * 2);
             }
             reservationsListEl.innerHTML = '<p class="no-reservations">Error loading reservations. Please try again.</p>';
-            addMessageToUI('Failed to load reservations. Please try again later.', 'received');
+            // No error message in chat UI per user request
         }
     }
     
@@ -176,7 +165,9 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         } catch (error) {
             console.error('Error loading chat messages:', error);
-            addMessageToUI(`Error loading messages: ${error.message}`, 'received');
+            // No error message in chat UI per user request
+            // Show welcome message if no messages exist
+            addMessageToUI('Hello! How can I help you today?', 'received');
         }
     }
     
@@ -264,7 +255,8 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) {
             console.error('Error sending message:', error);
             messagesEl.removeChild(loadingEl);
-            addMessageToUI(`Error: ${error.message || 'Failed to connect to the server. Please try again.'}`, 'received');
+            addMessageToUI('Sorry, I couldn\'t process your request.', 'received');
+            // Keep this generic message as it aligns with user interaction, not error exposure
         } finally {
             isWaitingForResponse = false;
         }
