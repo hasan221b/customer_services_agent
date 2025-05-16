@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 throw new Error('Failed to get user ID');
             }
             console.log(`User ID: ${currentUser}`);
-            document.getElementById('userInfo').textContent = `${currentUser.slice(0, 8)}...`;
+            //ocument.getElementById('userInfo').textContent = `${currentUser.slice(0, 8)}...`;
             
             // Create a chat for the user
             const response = await fetch(`/create_chat/${currentUser}`, {
