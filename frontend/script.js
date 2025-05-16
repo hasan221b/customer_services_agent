@@ -54,7 +54,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             setupEventListeners();
         } catch (error) {
             console.error('Initialization error:', error);
-            //addMessageToUI('Error initializing the app. Please refresh the page.', 'received');
+            addMessageToUI('Error initializing the app. Please refresh the page.', 'received');
         }
     }
     
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             return data.user_id;
         } catch (error) {
             console.error('Error getting user ID:', error);
-            //addMessageToUI('Failed to connect to the server. Please try again.', 'received');
+            addMessageToUI('Failed to connect to the server. Please try again.', 'received');
             return null;
         }
     }
@@ -126,6 +126,15 @@ document.addEventListener('DOMContentLoaded', async function() {
                     `;
                     reservationsListEl.appendChild(reservationEl);
                     
+                    // Add click event for interactivity
+                    //reservationEl.addEventListener('click', () => {
+                    //    console.log(`Clicked reservation: ${reservationEl.dataset.reservationId}`, {
+                    //        date: formattedDate,
+                     //       time: reservation.time
+                    //    });
+                        // Placeholder for future actions (e.g., cancel)
+                    //    addMessageToUI('Reservation details clicked. Action coming soon!', 'received');
+                    //});
                 });
             } else {
                 reservationsListEl.innerHTML = '<p class="no-reservations">No reservations found.</p>';
@@ -137,7 +146,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 return loadReservations(retryCount - 1, delay * 2);
             }
             reservationsListEl.innerHTML = '<p class="no-reservations">Error loading reservations. Please try again.</p>';
-            //addMessageToUI('Failed to load reservations. Please try again later.', 'received');
+            addMessageToUI('Failed to load reservations. Please try again later.', 'received');
         }
     }
     
@@ -163,11 +172,11 @@ document.addEventListener('DOMContentLoaded', async function() {
                 
                 messagesEl.scrollTop = messagesEl.scrollHeight;
             } else {
-                addMessageToUI('Hey there, I am Lumi a customers service Agent. I can answer any question about NeuroSphere Lab company and I can book you an appointment for a meeting with the company.I am ready to help you', 'received');
+                addMessageToUI('Hello! How can I help you today?', 'received');
             }
         } catch (error) {
             console.error('Error loading chat messages:', error);
-           // addMessageToUI(`Error loading messages: ${error.message}`, 'received');
+            addMessageToUI(`Error loading messages: ${error.message}`, 'received');
         }
     }
     
@@ -198,27 +207,24 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Handle message submission
     async function handleMessageSubmit(e) {
         e.preventDefault();
-        console.log('handleMessageSubmit called');
+        console.log('handleMessageSubmit triggered');
         
         const message = messageInput.value.trim();
-        console.log('Submission check:', {
-            message: message,
-            currentUser: currentUser,
-            currentChat: currentChat,
+        console.log('Message submission check:', {
+            message: !!message,
+            currentChat: !!currentChat,
             isWaitingForResponse
         });
         
         if (!message || !currentChat || isWaitingForResponse) {
-            console.log('Early exit due to invalid conditions');
             return;
         }
         
-        console.log('Adding sent message to UI');
+        console.log(`Sending message: ${message}`);
         addMessageToUI(message, 'sent');
         messageInput.value = '';
         
         isWaitingForResponse = true;
-        console.log('Adding loading indicator');
         const loadingEl = document.createElement('div');
         loadingEl.className = 'message received';
         loadingEl.innerHTML = '<div class="loading"></div>';
@@ -226,7 +232,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         messagesEl.scrollTop = messagesEl.scrollHeight;
         
         try {
-            console.log('Sending POST to:', `/chat/${currentUser}/${currentChat}`);
             const response = await fetch(`/chat/${currentUser}/${currentChat}`, {
                 method: 'POST',
                 headers: {
@@ -239,7 +244,7 @@ document.addEventListener('DOMContentLoaded', async function() {
                 credentials: 'include'
             });
             
-            console.log('Response status:', response.status);
+            console.log(`Response status: ${response.status}`);
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(`Server error: ${response.status} - ${errorText}`);
@@ -251,7 +256,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             messagesEl.removeChild(loadingEl);
             if (data.response) {
                 addMessageToUI(data.response, 'received');
-                console.log('Reloading reservations');
+                console.log('Reloading reservations after message');
                 await loadReservations();
             } else {
                 addMessageToUI('Sorry, I couldn\'t process your request.', 'received');
@@ -259,10 +264,9 @@ document.addEventListener('DOMContentLoaded', async function() {
         } catch (error) {
             console.error('Error sending message:', error);
             messagesEl.removeChild(loadingEl);
-            addMessageToUI(`Error: ${error.message || 'Failed to connect to the server.'}`, 'received');
+            addMessageToUI(`Error: ${error.message || 'Failed to connect to the server. Please try again.'}`, 'received');
         } finally {
             isWaitingForResponse = false;
-            console.log('Reset isWaitingForResponse');
         }
     }
     
